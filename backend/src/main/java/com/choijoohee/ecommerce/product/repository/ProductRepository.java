@@ -6,4 +6,6 @@ import com.choijoohee.ecommerce.product.dto.ProductDto;
 
 public interface ProductRepository {
 	List<ProductDto> selectAll();
+
+	ProductDto selectById(int productId);
 }

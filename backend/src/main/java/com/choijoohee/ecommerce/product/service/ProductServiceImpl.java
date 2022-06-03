@@ -11,11 +11,17 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 
 	@Override
 	public List<ProductDto> getProducts() {
 		return productRepository.selectAll();
 	}
+
+	@Override
+	public ProductDto findProductById(int productId) {
+		return productRepository.selectById(productId);
+	}
+
 }

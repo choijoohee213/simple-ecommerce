@@ -1,14 +1,10 @@
 package com.choijoohee.ecommerce.product.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@RequiredArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
+@AllArgsConstructor
 public class ProductDto {
 	private String deliveryGroup;
 	private String name;

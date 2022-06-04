@@ -3,11 +3,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.choijoohee.ecommerce.product.repository.ProductRepository">
     <select id="selectAll" resultType="ProductDto">
-        select delivery_group, name, price, quantity from product
+        select * from product
     </select>
 
     <select id="selectById" resultType="ProductDto">
-        select delivery_group, name, price, quantity from product where id = #{productId}
+        select * from product where id = #{productId}
     </select>
 
 </mapper>

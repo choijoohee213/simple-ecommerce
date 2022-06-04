@@ -14,11 +14,20 @@ import lombok.RequiredArgsConstructor;
 public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 
+	/**
+	 * 상품의 모든 목록을 조회하여 반환한다.
+	 * @return
+	 */
 	@Override
 	public List<ProductDto> getProducts() {
 		return productRepository.selectAll();
 	}
 
+	/**
+	 * 상품 id로 조회한 상품 객체를 반환한다.
+	 * @param productId 상품 번호(id)
+	 * @return
+	 */
 	@Override
 	public ProductDto findProductById(int productId) {
 		return productRepository.selectById(productId);

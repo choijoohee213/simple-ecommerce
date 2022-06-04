@@ -26,12 +26,21 @@ public class CartController {
 	private final CartService cartService;
 	private final ProductService productService;
 
+	/**
+	 * 장바구니 목록을 조회하여 리스트로 반환한다.
+	 * @return
+	 */
 	@GetMapping
 	public ResponseEntity<List<CartItemDto>> getCartItems() {
 		log.debug("장바구니 목록 불러오기");
 		return ResponseEntity.ok(cartService.getCartItems());
 	}
 
+	/**
+	 * 장바구니에 상품을 추가한다.
+	 * @param productId 상품 번호(id)
+	 * @return
+	 */
 	@PostMapping("/{productId}")
 	public ResponseEntity<String> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");

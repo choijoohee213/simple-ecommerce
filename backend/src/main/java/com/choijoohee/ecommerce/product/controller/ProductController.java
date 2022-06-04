@@ -20,6 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductController {
 	private final ProductService productService;
 
+	/**
+	 * 상품 목록을 조회하여 리스트로 반환한다.
+	 * @return
+	 */
 	@GetMapping
 	public ResponseEntity<List<ProductDto>> getProducts() {
 		log.debug("상품 목록 불러오기");

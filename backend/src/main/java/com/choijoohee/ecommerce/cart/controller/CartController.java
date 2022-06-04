@@ -33,16 +33,10 @@ public class CartController {
 	}
 
 	@PostMapping("/{productId}")
-	public ResponseEntity<?> addCartItem(@PathVariable int productId) {
+	public ResponseEntity<String> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");
-		//재고가 남아있는지 확인
 		ProductDto product = productService.findProductById(productId);
-		if (product.getQuantity() > 0) {
-			cartService.addCartItem(new CartItemDto(productId, product.getName(), product.getPrice(), 1));
-		} else {  //재고 없음
-			log.debug("상품 재고 없음");
-		}
-
-		return ResponseEntity.ok(HttpStatus.OK);
+		cartService.addCartItem(product);
+		return new ResponseEntity<>("장바구니에 상품을 넣었습니다!", HttpStatus.OK);
 	}
 }

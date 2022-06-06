@@ -42,13 +42,26 @@ public class CartServiceImpl implements CartService {
 		if (selectedItem == null) {
 			isValidQuantity(product.getQuantity());
 			log.debug("장바구니에 없는 상품 - 추가");
-			cartRepository.insert(new CartItem(product.getId(), product.getName(), product.getPrice(), 1));
+			cartRepository.insert(new CartItem(product));
 			return new CartItemInsertResponse();
 		} else {
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
-			cartRepository.increaseQuantity(selectedItem);
+			cartRepository.updateQuantity(selectedItem);
 			return new CartItemInsertResponse(selectedItem.getQuantity() + 1);
 		}
+	}
+
+	/**
+	 * 장바구니의 상품의 수량을 update 한다.
+	 * @param productId 상품의 번호(id)
+	 * @param updatedQuantity 바뀔 수량의 개수
+	 */
+	@Override
+	@Transactional
+	public void updateQuantity(int productId, int updatedQuantity) {
+		CartItem selectedItem = cartRepository.selectById(productId);
+		selectedItem.setQuantity(updatedQuantity);
+		cartRepository.updateQuantity(new CartItem(productId, selectedItem));
 	}
 
 	/**
@@ -56,7 +69,6 @@ public class CartServiceImpl implements CartService {
 	 * 남아있지 않다면 SoldOutException 예외 발생
 	 * @param quantity 수량
 	 */
-	@Override
 	public void isValidQuantity(int quantity) {
 		if (quantity <= 0) {
 			log.debug("상품 재고 없음");

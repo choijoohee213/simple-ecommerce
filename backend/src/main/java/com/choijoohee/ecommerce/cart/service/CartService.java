@@ -11,6 +11,5 @@ public interface CartService {
 
 	CartItemInsertResponse addCartItem(Product product);
 
-	void isValidQuantity(int quantity);
-
+	void updateQuantity(int productId, int updatedQuantity);
 }

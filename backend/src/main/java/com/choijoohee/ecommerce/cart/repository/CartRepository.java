@@ -11,5 +11,5 @@ public interface CartRepository {
 
 	void insert(CartItem cartItem);
 
-	void increaseQuantity(CartItem cartItem);
+	void updateQuantity(CartItem cartItem);
 }

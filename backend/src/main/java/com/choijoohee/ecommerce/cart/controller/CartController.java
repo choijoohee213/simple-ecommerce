@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,5 +49,19 @@ public class CartController {
 		log.debug("장바구니에 상품 추가 로직 시작");
 		Product product = productService.findProductById(productId);
 		return new ResponseEntity<>(cartService.addCartItem(product), HttpStatus.OK);
+	}
+
+	/**
+	 * 장바구니의 상품의 수량을 바꾼다.
+	 * +/- 버튼을 누르면 동작하는 메서드
+	 * @param productId 상품의 번호(id)
+	 * @param quantity 바뀔 수량의 개수
+	 * @return
+	 */
+	@PutMapping("/{productId}/{quantity}")
+	public ResponseEntity<?> updateQuantity(@PathVariable int productId, @PathVariable int quantity) {
+		log.debug("장바구니 상품 수량 업데이트");
+		cartService.updateQuantity(productId, quantity);
+		return ResponseEntity.ok().build();
 	}
 }

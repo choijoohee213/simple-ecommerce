@@ -3,20 +3,26 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.choijoohee.ecommerce.cart.repository.CartRepository">
     <select id="selectAll" resultType="CartItem">
-        select product_id, name, price, quantity from cart
+        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity
+        from cart
+        inner join product p on cart.product_id = p.id
     </select>
 
     <select id="selectById" resultType="CartItem">
-        select product_id, name, price, quantity from cart where product_id = #{productId};
+        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity
+        from cart
+        inner join product p on cart.product_id = p.id
+        where cart.product_id = #{productId};
     </select>
 
     <insert id="insert">
-        insert into cart(product_id, name, price)
-        values (#{productId}, #{name}, #{price})
+        insert into cart(product_id)
+        values (#{productId})
     </insert>
 
     <update id="updateQuantity">
-        update cart set quantity = #{quantity}
+        update cart
+        set quantity = #{quantity}
         where product_id = #{productId};
     </update>
 

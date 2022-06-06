@@ -3,8 +3,12 @@
     <b-container class="bv-example-row">
       <b-row v-for="item in cartItems" :key="item">
         <b-col>{{ item.name }}</b-col>
-        <b-col>{{ item.price }}</b-col>
-        <b-col>{{ item.quantity }}</b-col>
+        <b-col>{{ item.quantity * item.price }}</b-col>
+        <b-col>
+          <b-button variant="warning" @click="updateQuantity({ productId: item.productId, quantity: item.quantity - 1 })">-</b-button>
+          <span class="p-3">{{ item.quantity }}</span>
+          <b-button variant="warning" @click="updateQuantity({ productId: item.productId, quantity: item.quantity + 1 })">+</b-button>
+        </b-col>
       </b-row>
       <b-row v-if="!cartItems.length"> <p>장바구니가 비어있습니다.</p> </b-row>
     </b-container>
@@ -18,11 +22,6 @@ const cartStore = "cartStore";
 
 export default {
   name: "CartList",
-  data() {
-    return {
-      list: null,
-    };
-  },
   computed: {
     ...mapState(cartStore, ["cartItems"]),
   },
@@ -30,7 +29,7 @@ export default {
     this.getCartItems();
   },
   methods: {
-    ...mapActions(cartStore, ["getCartItems"]),
+    ...mapActions(cartStore, ["getCartItems", "updateQuantity"]),
   },
 };
 </script>

@@ -14,4 +14,11 @@ function selectAll(success, fail) {
   api.get(prefix).then(success).catch(fail);
 }
 
-export { insert, selectAll };
+async function update(info, success, fail) {
+  await api
+    .put(prefix + `/${info.productId}/${info.quantity}`)
+    .then(success)
+    .catch(fail);
+}
+
+export { insert, selectAll, update };

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.choijoohee.ecommerce.cart.dto.CartItemDto;
+import com.choijoohee.ecommerce.cart.dto.CartItemInsertResponse;
 import com.choijoohee.ecommerce.cart.service.CartService;
 import com.choijoohee.ecommerce.product.dto.ProductDto;
 import com.choijoohee.ecommerce.product.service.ProductService;
@@ -38,14 +39,14 @@ public class CartController {
 
 	/**
 	 * 장바구니에 상품을 추가한다.
+	 * 장바구니에 이미 있던 상품과 새롭게 추가하는 상품을 구분하여 처리한다.
 	 * @param productId 상품 번호(id)
 	 * @return
 	 */
 	@PostMapping("/{productId}")
-	public ResponseEntity<HttpStatus> addCartItem(@PathVariable int productId) {
+	public ResponseEntity<CartItemInsertResponse> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");
 		ProductDto product = productService.findProductById(productId);
-		cartService.addCartItem(product);
-		return ResponseEntity.ok().build();
+		return new ResponseEntity<>(cartService.addCartItem(product), HttpStatus.OK);
 	}
 }

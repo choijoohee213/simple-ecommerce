@@ -3,9 +3,10 @@ package com.choijoohee.ecommerce.cart.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.choijoohee.ecommerce.cart.dto.CartItemDto;
-import com.choijoohee.ecommerce.cart.exception.DuplicateCartItemException;
+import com.choijoohee.ecommerce.cart.dto.CartItemInsertResponse;
 import com.choijoohee.ecommerce.cart.repository.CartRepository;
 import com.choijoohee.ecommerce.product.dto.ProductDto;
 import com.choijoohee.ecommerce.product.exception.SoldOutException;
@@ -35,16 +36,18 @@ public class CartServiceImpl implements CartService {
 	 * @param productDto 장바구니에 넣을 상품 정보
 	 */
 	@Override
-	public void addCartItem(ProductDto productDto) {
+	@Transactional
+	public CartItemInsertResponse addCartItem(ProductDto productDto) {
 		CartItemDto selectedItem = cartRepository.selectById(productDto.getId());
 		if (selectedItem == null) {
 			isValidQuantity(productDto.getQuantity());
 			log.debug("장바구니에 없는 상품 - 추가");
 			cartRepository.insert(new CartItemDto(productDto.getId(), productDto.getName(), productDto.getPrice(), 1));
+			return new CartItemInsertResponse();
 		} else {
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
 			cartRepository.increaseQuantity(selectedItem);
-			throw new DuplicateCartItemException(selectedItem.getQuantity() + 1);
+			return new CartItemInsertResponse(selectedItem.getQuantity() + 1);
 		}
 	}
 

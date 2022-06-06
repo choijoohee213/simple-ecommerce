@@ -22,6 +22,19 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/cart",
+    name: "cart",
+    component: () => import("@/views/CartView.vue"),
+    redirect: "/cart/list",
+    children: [
+      {
+        path: "list",
+        name: "cartList",
+        component: () => import("@/components/CartList.vue"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.choijoohee.ecommerce.cart.dto.CartItemDto;
-import com.choijoohee.ecommerce.cart.exception.DuplicateItemException;
+import com.choijoohee.ecommerce.cart.exception.DuplicateCartItemException;
 import com.choijoohee.ecommerce.cart.repository.CartRepository;
 import com.choijoohee.ecommerce.product.dto.ProductDto;
 import com.choijoohee.ecommerce.product.exception.SoldOutException;
@@ -44,8 +44,7 @@ public class CartServiceImpl implements CartService {
 		} else {
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
 			cartRepository.increaseQuantity(selectedItem);
-			throw new DuplicateItemException(
-				"장바구니에 이미 있는 상품입니다!\n장바구니 수량이 " + (selectedItem.getQuantity() + 1) + "개가 되었습니다.");
+			throw new DuplicateCartItemException(selectedItem.getQuantity() + 1);
 		}
 	}
 
@@ -58,7 +57,7 @@ public class CartServiceImpl implements CartService {
 	public void isValidQuantity(int quantity) {
 		if (quantity <= 0) {
 			log.debug("상품 재고 없음");
-			throw new SoldOutException("상품의 재고가 없습니다.");
+			throw new SoldOutException();
 		}
 	}
 }

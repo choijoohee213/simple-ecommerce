@@ -42,10 +42,10 @@ public class CartController {
 	 * @return
 	 */
 	@PostMapping("/{productId}")
-	public ResponseEntity<String> addCartItem(@PathVariable int productId) {
+	public ResponseEntity<HttpStatus> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");
 		ProductDto product = productService.findProductById(productId);
 		cartService.addCartItem(product);
-		return new ResponseEntity<>("장바구니에 상품을 넣었습니다!", HttpStatus.OK);
+		return ResponseEntity.ok().build();
 	}
 }

@@ -1,11 +1,11 @@
-package com.choijoohee.ecommerce.advice;
+package com.choijoohee.ecommerce.common.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.choijoohee.ecommerce.cart.exception.DuplicateItemException;
+import com.choijoohee.ecommerce.cart.exception.DuplicateCartItemException;
 import com.choijoohee.ecommerce.product.exception.SoldOutException;
 
 @RestControllerAdvice
@@ -29,8 +29,8 @@ public class ExceptionAdvice {
 	 * @param exception 장바구니에 이미 있을 때 예외
 	 * @return
 	 */
-	@ExceptionHandler(DuplicateItemException.class)
-	public ResponseEntity<String> duplicateItemException(DuplicateItemException exception) {
+	@ExceptionHandler(DuplicateCartItemException.class)
+	public ResponseEntity<String> duplicateItemException(DuplicateCartItemException exception) {
 		return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
 	}
 }

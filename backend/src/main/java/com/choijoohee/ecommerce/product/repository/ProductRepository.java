@@ -2,10 +2,10 @@ package com.choijoohee.ecommerce.product.repository;
 
 import java.util.List;
 
-import com.choijoohee.ecommerce.product.dto.ProductDto;
+import com.choijoohee.ecommerce.product.dto.Product;
 
 public interface ProductRepository {
-	List<ProductDto> selectAll();
+	List<Product> selectAll();
 
-	ProductDto selectById(int productId);
+	Product selectById(int productId);
 }

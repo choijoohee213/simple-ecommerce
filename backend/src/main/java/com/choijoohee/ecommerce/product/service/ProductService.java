@@ -2,10 +2,10 @@ package com.choijoohee.ecommerce.product.service;
 
 import java.util.List;
 
-import com.choijoohee.ecommerce.product.dto.ProductDto;
+import com.choijoohee.ecommerce.product.dto.Product;
 
 public interface ProductService {
-	List<ProductDto> getProducts();
+	List<Product> getProducts();
 
-	ProductDto findProductById(int productId);
+	Product findProductById(int productId);
 }

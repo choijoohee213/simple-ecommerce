@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.choijoohee.ecommerce.cart.dto.CartItemDto;
+import com.choijoohee.ecommerce.cart.dto.CartItem;
 import com.choijoohee.ecommerce.cart.dto.CartItemInsertResponse;
 import com.choijoohee.ecommerce.cart.repository.CartRepository;
-import com.choijoohee.ecommerce.product.dto.ProductDto;
+import com.choijoohee.ecommerce.product.dto.Product;
 import com.choijoohee.ecommerce.product.exception.SoldOutException;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class CartServiceImpl implements CartService {
 	 * @return
 	 */
 	@Override
-	public List<CartItemDto> getCartItems() {
+	public List<CartItem> getCartItems() {
 		return cartRepository.selectAll();
 	}
 
@@ -33,16 +33,16 @@ public class CartServiceImpl implements CartService {
 	 * 해당 상품의 재고가 남아있는 지 확인 후,
 	 * 재고가 있다면 장바구니에 이미 있던 상품인지 확인한다.
 	 * 이미 있던 상품이라면 장바구니의 수량을 하나 늘리고, 아니라면 장바구니에 새로 넣는다.
-	 * @param productDto 장바구니에 넣을 상품 정보
+	 * @param product 장바구니에 넣을 상품 정보
 	 */
 	@Override
 	@Transactional
-	public CartItemInsertResponse addCartItem(ProductDto productDto) {
-		CartItemDto selectedItem = cartRepository.selectById(productDto.getId());
+	public CartItemInsertResponse addCartItem(Product product) {
+		CartItem selectedItem = cartRepository.selectById(product.getId());
 		if (selectedItem == null) {
-			isValidQuantity(productDto.getQuantity());
+			isValidQuantity(product.getQuantity());
 			log.debug("장바구니에 없는 상품 - 추가");
-			cartRepository.insert(new CartItemDto(productDto.getId(), productDto.getName(), productDto.getPrice(), 1));
+			cartRepository.insert(new CartItem(product.getId(), product.getName(), product.getPrice(), 1));
 			return new CartItemInsertResponse();
 		} else {
 			log.debug("장바구니에 있던 상품 - 수 늘리기");

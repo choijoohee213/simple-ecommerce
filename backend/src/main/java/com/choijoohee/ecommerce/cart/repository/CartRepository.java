@@ -2,14 +2,14 @@ package com.choijoohee.ecommerce.cart.repository;
 
 import java.util.List;
 
-import com.choijoohee.ecommerce.cart.dto.CartItemDto;
+import com.choijoohee.ecommerce.cart.dto.CartItem;
 
 public interface CartRepository {
-	List<CartItemDto> selectAll();
+	List<CartItem> selectAll();
 
-	CartItemDto selectById(int productId);
+	CartItem selectById(int productId);
 
-	void insert(CartItemDto cartItemDto);
+	void insert(CartItem cartItem);
 
-	void increaseQuantity(CartItemDto cartItemDto);
+	void increaseQuantity(CartItem cartItem);
 }

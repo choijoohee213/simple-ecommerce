@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.choijoohee.ecommerce.cart.dto.CartItemDto;
+import com.choijoohee.ecommerce.cart.dto.CartItem;
 import com.choijoohee.ecommerce.cart.dto.CartItemInsertResponse;
 import com.choijoohee.ecommerce.cart.service.CartService;
-import com.choijoohee.ecommerce.product.dto.ProductDto;
+import com.choijoohee.ecommerce.product.dto.Product;
 import com.choijoohee.ecommerce.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class CartController {
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<List<CartItemDto>> getCartItems() {
+	public ResponseEntity<List<CartItem>> getCartItems() {
 		log.debug("장바구니 목록 불러오기");
 		return ResponseEntity.ok(cartService.getCartItems());
 	}
@@ -46,7 +46,7 @@ public class CartController {
 	@PostMapping("/{productId}")
 	public ResponseEntity<CartItemInsertResponse> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");
-		ProductDto product = productService.findProductById(productId);
+		Product product = productService.findProductById(productId);
 		return new ResponseEntity<>(cartService.addCartItem(product), HttpStatus.OK);
 	}
 }

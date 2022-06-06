@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.choijoohee.ecommerce.product.dto.ProductDto;
+import com.choijoohee.ecommerce.product.dto.Product;
 import com.choijoohee.ecommerce.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
 	 * @return
 	 */
 	@Override
-	public List<ProductDto> getProducts() {
+	public List<Product> getProducts() {
 		return productRepository.selectAll();
 	}
 
@@ -29,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
 	 * @return
 	 */
 	@Override
-	public ProductDto findProductById(int productId) {
+	public Product findProductById(int productId) {
 		return productRepository.selectById(productId);
 	}
 

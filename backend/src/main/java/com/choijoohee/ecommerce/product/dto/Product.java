@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ProductDto {
+public class Product {
 	private int id;
 	private String deliveryGroup;
 	private String name;

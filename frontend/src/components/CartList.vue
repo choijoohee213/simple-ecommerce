@@ -1,7 +1,7 @@
 <template>
   <div class="my-5">
     <b-container class="bv-example-row">
-      <b-row v-for="item in cartItems" :key="item">
+      <b-row v-for="(item, index) in cartItems" :key="index">
         <b-col>{{ item.name }}</b-col>
         <b-col>{{ item.quantity * item.price }}</b-col>
         <b-col>

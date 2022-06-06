@@ -1,7 +1,7 @@
 <template>
   <div class="my-5">
     <b-container class="bv-example-row">
-      <b-row v-for="products in groupProducts" :key="products">
+      <b-row v-for="(products, index) in groupProducts" :key="index">
         <b-col v-for="(product, index) in products" :key="index">
           <b-row class="m-0"
             ><b>{{ product.name }}</b></b-row

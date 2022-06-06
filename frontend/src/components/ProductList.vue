@@ -8,7 +8,7 @@
           >
           <b-row class="m-0">{{ product.price }}</b-row>
           <b-row class="m-0">{{ product.quantity }}</b-row>
-          <b-row class="m-0"> <b-button variant="success">장바구니</b-button></b-row>
+          <b-row class="m-0"> <b-button variant="success" @click="addCartItem(`${product.id}`)">장바구니</b-button></b-row>
         </b-col>
       </b-row>
       <b-row v-if="!products.length"> <p>상품이 없습니다.</p> </b-row>
@@ -18,6 +18,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import { insert } from "@/api/cart.js";
 
 const productStore = "productStore";
 
@@ -31,7 +32,7 @@ export default {
   computed: {
     ...mapState(productStore, ["products"]),
     groupProducts() {
-      let size = 3;
+      let size = 4;
       let result = [];
 
       size = parseInt(size) || 2;
@@ -50,6 +51,18 @@ export default {
   },
   methods: {
     ...mapActions(productStore, ["getProducts"]),
+    addCartItem(productId) {
+      insert(
+        productId,
+        (response) => {
+          alert(response.data.message);
+        },
+        (error) => {
+          console.log(error);
+          alert(error.response.data);
+        }
+      );
+    },
   },
 };
 </script>

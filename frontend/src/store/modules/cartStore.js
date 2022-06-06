@@ -3,7 +3,7 @@ import { selectAll, update } from "@/api/cart.js";
 const cartStore = {
   namespaced: true,
   state: {
-    cartItems: null,
+    cartItems: [],
   },
   getters: {},
   mutations: {

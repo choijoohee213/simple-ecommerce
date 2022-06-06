@@ -8,6 +8,7 @@
           >
           <b-row class="m-0">{{ product.price }}</b-row>
           <b-row class="m-0">{{ product.quantity }}</b-row>
+          <b-row class="m-0">{{ product.deliveryGroup }}</b-row>
           <b-row class="m-0"> <b-button variant="success" @click="addCartItem(`${product.id}`)">장바구니</b-button></b-row>
         </b-col>
       </b-row>

@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.choijoohee.ecommerce.cart.repository.CartRepository">
-    <select id="selectAll" resultType="CartItemDto">
+    <select id="selectAll" resultType="CartItem">
         select product_id, name, price, quantity from cart
     </select>
 
-    <select id="selectById" resultType="CartItemDto">
+    <select id="selectById" resultType="CartItem">
         select product_id, name, price, quantity from cart where product_id = #{productId};
     </select>
 
@@ -15,8 +15,8 @@
         values (#{productId}, #{name}, #{price})
     </insert>
 
-    <update id="increaseQuantity">
-        update cart set quantity = #{quantity} + 1
+    <update id="updateQuantity">
+        update cart set quantity = #{quantity}
         where product_id = #{productId};
     </update>
 

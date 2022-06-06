@@ -1,6 +1,7 @@
 package com.choijoohee.ecommerce.cart.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,11 @@ public class CartController {
 	private final ProductService productService;
 
 	/**
-	 * 장바구니 목록을 조회하여 리스트로 반환한다.
+	 * 배송 그룹 별 장바구니 목록을 조회하여 반환한다.
 	 * @return
 	 */
 	@GetMapping
-	public ResponseEntity<List<CartItem>> getCartItems() {
+	public ResponseEntity<Map<String, List<CartItem>>> getCartItems() {
 		log.debug("장바구니 목록 불러오기");
 		return ResponseEntity.ok(cartService.getCartItems());
 	}

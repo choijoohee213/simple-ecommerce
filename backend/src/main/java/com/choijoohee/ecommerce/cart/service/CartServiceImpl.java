@@ -1,6 +1,9 @@
 package com.choijoohee.ecommerce.cart.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +25,20 @@ public class CartServiceImpl implements CartService {
 
 	/**
 	 * 장바구니의 모든 목록을 반환한다.
+	 * 배송 그룹 별로 묶어서 반환하기 위해서 Map을 이용하여 반환한다.
 	 * @return
 	 */
 	@Override
-	public List<CartItem> getCartItems() {
-		return cartRepository.selectAll();
+	public Map<String, List<CartItem>> getCartItems() {
+		Map<String, List<CartItem>> cartItemsByDeliveryGroup = new HashMap<>();
+		for (CartItem item : cartRepository.selectAll()) {
+			String deliveryGroup = item.getDeliveryGroup();
+			if(!cartItemsByDeliveryGroup.containsKey(deliveryGroup)) {
+				cartItemsByDeliveryGroup.put(deliveryGroup, new ArrayList<>());
+			}
+			cartItemsByDeliveryGroup.get(deliveryGroup).add(item);
+		}
+		return cartItemsByDeliveryGroup;
 	}
 
 	/**
@@ -46,8 +58,9 @@ public class CartServiceImpl implements CartService {
 			return new CartItemInsertResponse();
 		} else {
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
+			selectedItem.setQuantity(selectedItem.getQuantity() + 1);
 			cartRepository.updateQuantity(selectedItem);
-			return new CartItemInsertResponse(selectedItem.getQuantity() + 1);
+			return new CartItemInsertResponse(selectedItem.getQuantity());
 		}
 	}
 
@@ -61,7 +74,7 @@ public class CartServiceImpl implements CartService {
 	public void updateQuantity(int productId, int updatedQuantity) {
 		CartItem selectedItem = cartRepository.selectById(productId);
 		selectedItem.setQuantity(updatedQuantity);
-		cartRepository.updateQuantity(new CartItem(productId, selectedItem));
+		cartRepository.updateQuantity(selectedItem);
 	}
 
 	/**

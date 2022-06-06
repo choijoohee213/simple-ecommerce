@@ -5,7 +5,7 @@
         <b-col>{{ item.name }}</b-col>
         <b-col>{{ item.quantity * item.price }}</b-col>
         <b-col>
-          <b-button variant="warning" @click="updateQuantity({ productId: item.productId, quantity: item.quantity - 1 })">-</b-button>
+          <b-button variant="warning" @click="decreaseQuantity(item.productId, item.quantity)">-</b-button>
           <span class="p-3">{{ item.quantity }}</span>
           <b-button variant="warning" @click="updateQuantity({ productId: item.productId, quantity: item.quantity + 1 })">+</b-button>
         </b-col>
@@ -30,6 +30,10 @@ export default {
   },
   methods: {
     ...mapActions(cartStore, ["getCartItems", "updateQuantity"]),
+    decreaseQuantity(productId, quantity) {
+      if (quantity === 1) return;
+      this.updateQuantity({ productId: productId, quantity: quantity - 1 });
+    },
   },
 };
 </script>

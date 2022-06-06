@@ -1,4 +1,4 @@
-package com.choijoohee.ecommerce.config;
+package com.choijoohee.ecommerce.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

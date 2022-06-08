@@ -25,7 +25,7 @@ const cartStore = {
     },
     async deleteCartItem({ commit }, productId) {
       await deleteItem(productId);
-      selectAll((response) => {
+      await selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });
     },

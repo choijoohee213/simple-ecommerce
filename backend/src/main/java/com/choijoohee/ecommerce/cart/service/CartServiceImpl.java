@@ -87,6 +87,10 @@ public class CartServiceImpl implements CartService {
 		cartRepository.delete(productId);
 	}
 
+	/**
+	 * 장바구니 상품의 selected를 수정한다.(toggle)
+	 * @param productId 상품 번호(id)
+	 */
 	@Override
 	@Transactional
 	public void updateSelected(int productId) {

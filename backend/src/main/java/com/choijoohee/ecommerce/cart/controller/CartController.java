@@ -79,6 +79,12 @@ public class CartController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * 장바구니 상품의 체크박스 체크 여부가 바뀔경우 호출되는 메서드이다.
+	 * 체크여부를 토글하여 저장한다.
+	 * @param productId selected 를 토글할 상품 번호(id)
+	 * @return
+	 */
 	@PutMapping("/{productId}/selected")
 	public ResponseEntity<?> toggleSelectedItem(@PathVariable int productId) {
 		log.debug("장바구니 상품 체크 토글");

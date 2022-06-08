@@ -1,10 +1,17 @@
 <template>
   <div class="my-5">
     <b-container class="bv-example-row">
+      <b-row class="m-3">
+        <b-col cols="1">
+          <input type="checkbox" v-model="allChecked" @click="checkAll($event.target.checked)" />
+        </b-col>
+        <b-col></b-col>
+      </b-row>
+
       <b-row v-for="(deliveryGroup, group) in cartItems" :key="group">
         <b-col>
           <b-row class="m-3">
-            <b-col cols="1"><input type="checkbox" v-model="allChecked[group]" @click="checkedAll($event.target.checked, group)" /></b-col>
+            <b-col cols="1"><input type="checkbox" v-model="groupChecked[group]" @click="checkGroupAll($event.target.checked, group)" /></b-col>
             <b-col cols="9"
               ><h4 class="float-left">{{ group }}</h4></b-col
             >
@@ -12,7 +19,7 @@
           </b-row>
 
           <b-row class="m-3" v-for="(item, index) in deliveryGroup" :key="index">
-            <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="selected(group, item.productId)" /></b-col>
+            <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem(group, item.productId)" /></b-col>
             <b-col class="text-left">{{ item.name }}</b-col>
             <b-col>{{ item.quantity * item.price }}</b-col>
             <b-col>
@@ -38,7 +45,8 @@ export default {
   name: "CartList",
   data() {
     return {
-      allChecked: {
+      checkedGroupCnt: 0,
+      groupChecked: {
         쓱배송: false,
         새벽배송: false,
         택배: false,
@@ -48,6 +56,9 @@ export default {
   },
   computed: {
     ...mapState(cartStore, ["cartItems"]),
+    allChecked() {
+      return this.checkedGroupCnt == this.groups.length;
+    },
   },
   created() {
     this.getCartItems()
@@ -59,12 +70,14 @@ export default {
           let groupName = this.groups[g];
           for (let i in this.cartItems[groupName]) {
             if (!this.cartItems[groupName][i].selected) {
-              this.allChecked[groupName] = false;
+              this.groupChecked[groupName] = false;
+              this.checkedGroupCnt--;
               break;
             } else {
-              this.allChecked[groupName] = true;
+              this.groupChecked[groupName] = true;
             }
           }
+          this.checkedGroupCnt++;
         }
       });
   },
@@ -74,24 +87,33 @@ export default {
       if (quantity === 1) return;
       this.updateQuantity({ productId: productId, quantity: quantity - 1 });
     },
-    checkedAll(checked, groupName) {
-      this.allChecked[groupName] = checked;
+    checkAll(checked) {
+      for (let g in this.groups) {
+        this.checkGroupAll(checked, this.groups[g]);
+      }
+    },
+    checkGroupAll(checked, groupName) {
+      this.groupChecked[groupName] = checked;
+      if (!checked) this.checkedGroupCnt--;
+      else this.checkedGroupCnt++;
       for (let i in this.cartItems[groupName]) {
         if (this.cartItems[groupName][i].selected != checked) {
           this.changeSelectedItem(this.cartItems[groupName][i].productId);
         }
       }
     },
-    selected(groupName, productId) {
+    checkItem(groupName, productId) {
       this.changeSelectedItem(productId);
       for (let i in this.cartItems[groupName]) {
         if (!this.cartItems[groupName][i].selected) {
-          this.allChecked[groupName] = false;
+          this.groupChecked[groupName] = false;
+          this.checkedGroupCnt--;
           return;
         } else {
-          this.allChecked[groupName] = true;
+          this.groupChecked[groupName] = true;
         }
       }
+      this.checkedGroupCnt++;
     },
   },
 };

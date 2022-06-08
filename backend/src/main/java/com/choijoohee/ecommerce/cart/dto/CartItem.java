@@ -13,6 +13,7 @@ public class CartItem {
 	private String name;
 	private int price;
 	private int quantity;
+	private boolean selected;
 
 	public CartItem(Product product) {
 		this.productId = product.getId();
@@ -20,6 +21,7 @@ public class CartItem {
 		this.name = product.getName();
 		this.price = product.getPrice();
 		this.quantity = 1;
+		this.selected = false;
 	}
 
 	public CartItem(int productId, CartItem selectedItem) {
@@ -28,5 +30,6 @@ public class CartItem {
 		this.name = selectedItem.getName();
 		this.price = selectedItem.getPrice();
 		this.quantity = selectedItem.getQuantity();
+		this.selected = selectedItem.isSelected();
 	}
 }

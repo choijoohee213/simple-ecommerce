@@ -78,6 +78,22 @@ public class CartServiceImpl implements CartService {
 	}
 
 	/**
+	 * 장바구니의 상품을 삭제한다.
+	 * @param productId 상품의 번호(id)
+	 */
+	@Override
+	@Transactional
+	public void deleteCartItem(int productId) {
+		cartRepository.delete(productId);
+	}
+
+	@Override
+	@Transactional
+	public void updateSelected(int productId) {
+		cartRepository.updateSelected(productId);
+	}
+
+	/**
 	 * 상품의 재고(수량)가 남아있는 지 확인한다.
 	 * 남아있지 않다면 SoldOutException 예외 발생
 	 * @param quantity 수량

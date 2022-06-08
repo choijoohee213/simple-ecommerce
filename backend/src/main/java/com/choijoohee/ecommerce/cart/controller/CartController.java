@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,6 +64,25 @@ public class CartController {
 	public ResponseEntity<?> updateQuantity(@PathVariable int productId, @PathVariable int quantity) {
 		log.debug("장바구니 상품 수량 업데이트");
 		cartService.updateQuantity(productId, quantity);
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 상품 번호에 해당하는 장바구니의 상품을 삭제한다.
+	 * @param productId 상품 번호(id)
+	 * @return
+	 */
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<?> deleteCartItem(@PathVariable int productId) {
+		log.debug("장바구니 상품 삭제");
+		cartService.deleteCartItem(productId);
+		return ResponseEntity.ok().build();
+	}
+
+	@PutMapping("/{productId}/selected")
+	public ResponseEntity<?> toggleSelectedItem(@PathVariable int productId) {
+		log.debug("장바구니 상품 체크 토글");
+		cartService.updateSelected(productId);
 		return ResponseEntity.ok().build();
 	}
 }

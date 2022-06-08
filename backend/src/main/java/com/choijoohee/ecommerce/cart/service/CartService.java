@@ -13,4 +13,8 @@ public interface CartService {
 	CartItemInsertResponse addCartItem(Product product);
 
 	void updateQuantity(int productId, int updatedQuantity);
+
+	void deleteCartItem(int productId);
+
+	void updateSelected(int productId);
 }

@@ -3,24 +3,27 @@
     <b-container class="bv-example-row">
       <b-row class="m-3" v-if="this.groups.length > 0">
         <b-col cols="1">
-          <input type="checkbox" v-model="allChecked" @click="checkAll($event.target.checked)" />
+          <input type="checkbox" id="allCheckBox" v-model="allChecked" @click="checkAll($event.target.checked)" />
         </b-col>
-        <b-col class="text-left">전체선택</b-col>
+        <b-col class="text-left"><label for="allCheckBox">전체선택</label></b-col>
+        <b-col cols="2"><b-btn variant="success" @click="discardCheckedItems()">선택삭제</b-btn></b-col>
       </b-row>
 
       <b-row v-for="(deliveryGroup, group) in cartItems" :key="group">
         <b-col>
           <b-row class="m-3">
-            <b-col cols="1"><input type="checkbox" v-model="groupChecked[group]" @click="checkGroupAll($event.target.checked, group)" /></b-col>
+            <b-col cols="1"><input type="checkbox" id="groupCheckBox" v-model="groupChecked[group]" @click="checkGroupAll($event.target.checked, group)" /></b-col>
             <b-col cols="9"
-              ><h4 class="float-left">{{ group }}</h4></b-col
+              ><h4 class="float-left">
+                <label for="groupCheckBox">{{ group }}</label>
+              </h4></b-col
             >
             <b-col></b-col>
           </b-row>
 
           <b-row class="m-3" v-for="(item, index) in deliveryGroup" :key="index">
             <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem($event.target.checked, group, item.productId)" /></b-col>
-            <b-col class="text-left">{{ item.name }}</b-col>
+            <b-col cols="6" class="text-left">{{ item.name }}</b-col>
             <b-col>{{ item.quantity * item.price }}</b-col>
             <b-col>
               <b-button variant="warning" @click="decreaseQuantity(item.productId, item.quantity)">-</b-button>
@@ -52,6 +55,8 @@ export default {
   computed: {
     ...mapState(cartStore, ["cartItems"]),
     allChecked() {
+      console.log(this.checkedGroupCnt);
+      console.log(this.groups.length);
       return this.checkedGroupCnt === this.groups.length;
     },
     groups() {
@@ -117,7 +122,10 @@ export default {
       let isChecked = this.groupChecked[groupName];
       await this.deleteCartItem(productId).then(() => {
         if (!this.cartItems[groupName]) {
-          if (isChecked) this.checkedGroupCnt--;
+          if (isChecked) {
+            console.log(groupName);
+            this.checkedGroupCnt--;
+          }
           return;
         }
         for (let i in this.cartItems[groupName]) {
@@ -130,6 +138,24 @@ export default {
           this.groupChecked[groupName] = true;
         }
       });
+    },
+    async discardCheckedItems() {
+      let deleted = [];
+      for (let g in this.groups) {
+        let groupName = this.groups[g];
+        for (let i in this.cartItems[groupName]) {
+          if (this.cartItems[groupName][i].selected) {
+            deleted.push(this.cartItems[groupName][i]);
+          }
+        }
+      }
+      if (deleted.length == 0) {
+        alert("선택된 상품이 없습니다.");
+        return;
+      }
+      for (let i in deleted) {
+        await this.discardItem(deleted[i].productId, deleted[i].deliveryGroup);
+      }
     },
   },
 };

@@ -1,4 +1,4 @@
-import { selectAll, update } from "@/api/cart.js";
+import { selectAll, update, deleteItem, toggleSelect } from "@/api/cart.js";
 
 const cartStore = {
   namespaced: true,
@@ -12,13 +12,25 @@ const cartStore = {
     },
   },
   actions: {
-    getCartItems({ commit }) {
-      selectAll((response) => {
+    async getCartItems({ commit }) {
+      await selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });
     },
     async updateQuantity({ commit }, info) {
       await update(info);
+      selectAll((response) => {
+        commit("SET_CART_ITEMS", response.data);
+      });
+    },
+    async deleteCartItem({ commit }, productId) {
+      await deleteItem(productId);
+      selectAll((response) => {
+        commit("SET_CART_ITEMS", response.data);
+      });
+    },
+    async changeSelectedItem({ commit }, productId) {
+      await toggleSelect(productId);
       selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });

@@ -1,9 +1,9 @@
 package com.choijoohee.ecommerce.cart.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +30,12 @@ public class CartServiceImpl implements CartService {
 	 */
 	@Override
 	public Map<String, List<CartItem>> getCartItems() {
-		Map<String, List<CartItem>> cartItemsByDeliveryGroup = new HashMap<>();
-		for (CartItem item : cartRepository.selectAll()) {
-			String deliveryGroup = item.getDeliveryGroup();
-			if(!cartItemsByDeliveryGroup.containsKey(deliveryGroup)) {
-				cartItemsByDeliveryGroup.put(deliveryGroup, new ArrayList<>());
-			}
-			cartItemsByDeliveryGroup.get(deliveryGroup).add(item);
-		}
-		return cartItemsByDeliveryGroup;
+		return cartRepository.selectAll()
+			.stream()
+			.collect(
+				Collectors.groupingBy(CartItem::getDeliveryGroup,
+					Collectors.mapping(Function.identity(), Collectors.toList()))
+			);
 	}
 
 	/**

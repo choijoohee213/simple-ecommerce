@@ -57,6 +57,7 @@ public class CartServiceImpl implements CartService {
 			cartRepository.insert(new CartItem(product));
 			return new CartItemInsertResponse();
 		} else {
+			isValidQuantity(product.getQuantity() - selectedItem.getQuantity());
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
 			selectedItem.setQuantity(selectedItem.getQuantity() + 1);
 			cartRepository.updateQuantity(selectedItem);
@@ -71,7 +72,8 @@ public class CartServiceImpl implements CartService {
 	 */
 	@Override
 	@Transactional
-	public void updateQuantity(int productId, int updatedQuantity) {
+	public void updateQuantity(int productId, int productQuantity, int updatedQuantity) {
+		isValidQuantity(productQuantity - updatedQuantity);
 		CartItem selectedItem = cartRepository.selectById(productId);
 		selectedItem.setQuantity(updatedQuantity);
 		cartRepository.updateQuantity(selectedItem);

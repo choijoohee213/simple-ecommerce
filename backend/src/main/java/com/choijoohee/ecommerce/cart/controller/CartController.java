@@ -63,7 +63,8 @@ public class CartController {
 	@PutMapping("/{productId}/{quantity}")
 	public ResponseEntity<?> updateQuantity(@PathVariable int productId, @PathVariable int quantity) {
 		log.debug("장바구니 상품 수량 업데이트");
-		cartService.updateQuantity(productId, quantity);
+		Product product = productService.findProductById(productId);
+		cartService.updateQuantity(productId, product.getQuantity(), quantity);
 		return ResponseEntity.ok().build();
 	}
 

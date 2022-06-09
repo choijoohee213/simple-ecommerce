@@ -22,19 +22,30 @@
           </b-row>
 
           <b-row class="m-3" v-for="(item, index) in deliveryGroup" :key="index">
-            <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem($event.target.checked, group, item.productId)" /></b-col>
+            <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem($event.target.checked, item)" /></b-col>
             <b-col cols="6" class="text-left">{{ item.name }}</b-col>
             <b-col>{{ item.quantity * item.price }}</b-col>
             <b-col>
-              <b-button variant="warning" @click="decreaseQuantity(item.productId, item.quantity)">-</b-button>
+              <b-button variant="warning" @click="decreaseQuantity(item)">-</b-button>
               <span class="p-3">{{ item.quantity }}</span>
-              <b-button variant="warning" @click="updateQuantity({ productId: item.productId, quantity: item.quantity + 1 })">+</b-button>
-              <b-button class="ml-3" variant="white" @click="discardItem(item.productId, group)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+              <b-button variant="warning" @click="increaseQuantity(item)">+</b-button>
+              <b-button class="ml-3" variant="white" @click="discardItem(item)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
             </b-col>
           </b-row>
         </b-col>
       </b-row>
-      <b-row v-if="this.groups.length === 0"> <p>장바구니가 비어있습니다.</p> </b-row>
+      <b-row v-if="this.groups.length > 0">
+        <b-col cols="9">
+          결제예정금액 :
+          <span v-show="checkedItemCnt > 0"> {{ chekcedAmountOfPayment }}</span>
+          <span v-show="checkedItemCnt === 0"> {{ totalAmountOfPayment }}</span>
+          원
+        </b-col>
+        <b-col>
+          <b-button variant="warning" @click="buy"> 구매하기 </b-button>
+        </b-col>
+      </b-row>
+      <b-row v-else> <p>장바구니가 비어있습니다.</p> </b-row>
     </b-container>
   </div>
 </template>
@@ -48,15 +59,16 @@ export default {
   name: "CartList",
   data() {
     return {
+      checkedItemCnt: 0,
       checkedGroupCnt: 0,
       groupChecked: {},
+      totalAmountOfPayment: 0,
+      chekcedAmountOfPayment: 0,
     };
   },
   computed: {
     ...mapState(cartStore, ["cartItems"]),
     allChecked() {
-      console.log(this.checkedGroupCnt);
-      console.log(this.groups.length);
       return this.checkedGroupCnt === this.groups.length;
     },
     groups() {
@@ -68,23 +80,32 @@ export default {
       for (let g in this.groups) {
         let groupName = this.groups[g];
         for (let i in this.cartItems[groupName]) {
-          if (!this.cartItems[groupName][i].selected) {
+          let item = this.cartItems[groupName][i];
+          this.totalAmountOfPayment += item.quantity * item.price;
+          if (!item.selected) {
             this.groupChecked[groupName] = false;
-            this.checkedGroupCnt--;
-            break;
           } else {
+            this.chekcedAmountOfPayment += item.quantity * item.price;
+            this.checkedItemCnt++;
             this.groupChecked[groupName] = true;
           }
         }
-        this.checkedGroupCnt++;
+        if (this.groupChecked[groupName]) this.checkedGroupCnt++;
       }
     });
   },
   methods: {
     ...mapActions(cartStore, ["getCartItems", "updateQuantity", "deleteCartItem", "changeSelectedItem"]),
-    decreaseQuantity(productId, quantity) {
-      if (quantity === 1) return;
-      this.updateQuantity({ productId: productId, quantity: quantity - 1 });
+    decreaseQuantity(item) {
+      if (item.quantity === 1) return;
+      if (item.selected) this.chekcedAmountOfPayment -= item.price;
+      this.totalAmountOfPayment -= item.price;
+      this.updateQuantity({ productId: item.productId, quantity: item.quantity - 1 });
+    },
+    increaseQuantity(item) {
+      if (item.selected) this.chekcedAmountOfPayment += item.price;
+      this.totalAmountOfPayment += item.price;
+      this.updateQuantity({ productId: item.productId, quantity: item.quantity + 1 });
     },
     checkAll(checked) {
       for (let g in this.groups) {
@@ -96,46 +117,62 @@ export default {
       if (!checked) this.checkedGroupCnt--;
       else this.checkedGroupCnt++;
       for (let i in this.cartItems[groupName]) {
-        if (this.cartItems[groupName][i].selected != checked) {
-          this.changeSelectedItem(this.cartItems[groupName][i].productId);
+        let item = this.cartItems[groupName][i];
+        if (item.selected != checked) {
+          if (!checked) {
+            this.checkedItemCnt--;
+            this.chekcedAmountOfPayment -= item.quantity * item.price;
+          } else {
+            this.checkedItemCnt++;
+            this.chekcedAmountOfPayment += item.quantity * item.price;
+          }
+          this.changeSelectedItem(item.productId);
         }
       }
     },
-    checkItem(checked, groupName, productId) {
-      this.changeSelectedItem(productId);
+    checkItem(checked, item) {
+      this.changeSelectedItem(item.productId);
       if (!checked) {
-        if (this.groupChecked[groupName]) {
+        if (this.groupChecked[item.deliveryGroup]) {
           this.checkedGroupCnt--;
-          this.groupChecked[groupName] = false;
+          this.groupChecked[item.deliveryGroup] = false;
         }
+        this.checkedItemCnt--;
+        this.chekcedAmountOfPayment -= item.quantity * item.price;
         return;
       }
-      for (let i in this.cartItems[groupName]) {
-        if (!this.cartItems[groupName][i].selected) {
+      this.checkedItemCnt++;
+      this.chekcedAmountOfPayment += item.quantity * item.price;
+      for (let i in this.cartItems[item.deliveryGroup]) {
+        if (!this.cartItems[item.deliveryGroup][i].selected) {
           return;
         }
       }
       this.checkedGroupCnt++;
-      this.groupChecked[groupName] = true;
+      this.groupChecked[item.deliveryGroup] = true;
     },
-    async discardItem(productId, groupName) {
-      let isChecked = this.groupChecked[groupName];
-      await this.deleteCartItem(productId).then(() => {
-        if (!this.cartItems[groupName]) {
-          if (isChecked) {
-            console.log(groupName);
+    async discardItem(item) {
+      this.totalAmountOfPayment -= item.quantity * item.price;
+      if (item.selected) {
+        this.checkedItemCnt--;
+        this.chekcedAmountOfPayment -= item.quantity * item.price;
+      }
+      let isCheckedGroup = this.groupChecked[item.deliveryGroup];
+      await this.deleteCartItem(item.productId).then(() => {
+        if (!this.cartItems[item.deliveryGroup]) {
+          if (isCheckedGroup) {
             this.checkedGroupCnt--;
           }
           return;
         }
-        for (let i in this.cartItems[groupName]) {
-          if (!this.cartItems[groupName][i].selected) {
+        for (let i in this.cartItems[item.deliveryGroup]) {
+          if (!this.cartItems[item.deliveryGroup][i].selected) {
             return;
           }
         }
-        if (!isChecked) {
+        if (!isCheckedGroup) {
           this.checkedGroupCnt++;
-          this.groupChecked[groupName] = true;
+          this.groupChecked[item.deliveryGroup] = true;
         }
       });
     },
@@ -154,7 +191,23 @@ export default {
         return;
       }
       for (let i in deleted) {
-        await this.discardItem(deleted[i].productId, deleted[i].deliveryGroup);
+        await this.discardItem(deleted[i]);
+      }
+    },
+    async buy() {
+      if (this.checkedItemCnt == 0) {
+        let amountOfPayment = this.totalAmountOfPayment;
+        for (let g in this.groups) {
+          let groupName = this.groups[g];
+          for (let i in this.cartItems[groupName]) {
+            this.discardItem(this.cartItems[groupName][i]);
+          }
+          alert("구매 성공! (금액 : " + amountOfPayment + " 원)");
+        }
+      } else {
+        let amountOfPayment = this.chekcedAmountOfPayment;
+        await this.discardCheckedItems();
+        alert("구매 성공! (금액 : " + amountOfPayment + " 원)");
       }
     },
   },

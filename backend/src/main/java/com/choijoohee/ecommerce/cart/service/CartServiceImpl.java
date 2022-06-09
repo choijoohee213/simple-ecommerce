@@ -73,7 +73,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	@Transactional
 	public void updateQuantity(int productId, int productQuantity, int updatedQuantity) {
-		isValidQuantity(productQuantity - updatedQuantity);
+		isValidQuantity(productQuantity - (updatedQuantity - 1));
 		CartItem selectedItem = cartRepository.selectById(productId);
 		selectedItem.setQuantity(updatedQuantity);
 		cartRepository.updateQuantity(selectedItem);

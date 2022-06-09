@@ -102,10 +102,12 @@ export default {
       this.totalAmountOfPayment -= item.price;
       this.updateQuantity({ productId: item.productId, quantity: item.quantity - 1 });
     },
-    increaseQuantity(item) {
+    async increaseQuantity(item) {
+      let success = await this.updateQuantity({ productId: item.productId, quantity: item.quantity + 1 });
+      if (success) {
       if (item.selected) this.chekcedAmountOfPayment += item.price;
       this.totalAmountOfPayment += item.price;
-      this.updateQuantity({ productId: item.productId, quantity: item.quantity + 1 });
+      }
     },
     checkAll(checked) {
       for (let g in this.groups) {

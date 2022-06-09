@@ -18,16 +18,19 @@ const cartStore = {
       });
     },
     async updateQuantity({ commit }, info) {
+      let success = true;
       await update(
         info,
         () => {},
         (error) => {
           alert(error.response.data);
+          success = false;
         }
       );
       selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });
+      return success;
     },
     async deleteCartItem({ commit }, productId) {
       await deleteItem(productId);

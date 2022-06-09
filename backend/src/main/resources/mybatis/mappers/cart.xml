@@ -3,13 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.choijoohee.ecommerce.cart.repository.CartRepository">
     <select id="selectAll" resultType="CartItem">
-        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, cart.selected
+        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, p.image, cart.selected
         from cart
         inner join product p on cart.product_id = p.id
     </select>
 
     <select id="selectById" resultType="CartItem">
-        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, cart.selected
+        select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, p.image, cart.selected
         from cart
         inner join product p on cart.product_id = p.id
         where cart.product_id = #{productId};

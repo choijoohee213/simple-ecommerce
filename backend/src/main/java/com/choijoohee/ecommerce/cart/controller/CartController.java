@@ -123,6 +123,7 @@ public class CartController {
 
 	/**
 	 * 장바구니의 모든 상품을 구매한다.
+	 * 재고 확인 후 유효하다면 장바구니 목록을 비운다.
 	 * @return
 	 */
 	@GetMapping("/pay")
@@ -132,6 +133,11 @@ public class CartController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * 장바구니에서 선택된 상품들만 구매한다.
+	 * 재고 확인 후 유효하다면 장바구니 목록에서 제거한다.
+	 * @return
+	 */
 	@GetMapping("/pay/selected")
 	public ResponseEntity<HttpStatus> paySelected() {
 		log.debug("장바구니에서 선택한 상품 구매");

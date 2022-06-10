@@ -1,48 +1,62 @@
 <template>
   <div class="my-5">
-    <b-container class="bv-example-row">
-      <b-row class="m-3" v-if="this.groups.length > 0">
+    <b-container>
+      <b-row v-if="this.groups.length > 0" class="mb-3">
+        <b-col>
+          <b-row>
         <b-col cols="1">
           <input type="checkbox" id="allCheckBox" v-model="allChecked" @click="checkAll($event.target.checked)" />
         </b-col>
-        <b-col class="text-left"><label for="allCheckBox">전체선택</label></b-col>
-        <b-col cols="2"><b-btn variant="success" @click="discardCheckedItems()">선택삭제</b-btn></b-col>
+            <b-col class="text-left"
+              ><label for="allCheckBox"><b>전체선택</b></label></b-col
+            >
+            <b-col cols="2"
+              ><b-btn variant="success" @click="discardCheckedItems()">선택삭제 <b-icon icon="cart-x-fill"></b-icon></b-btn
+            ></b-col>
+          </b-row>
+        </b-col>
       </b-row>
 
-      <b-row v-for="(deliveryGroup, group) in cartItems" :key="group">
+      <b-row v-for="(deliveryGroup, group) in cartItems" :key="group" class="groupRow">
         <b-col>
-          <b-row class="m-3">
-            <b-col cols="1"><input type="checkbox" id="groupCheckBox" v-model="groupChecked[group]" @click="checkGroupAll($event.target.checked, group)" /></b-col>
-            <b-col cols="9"
-              ><h4 class="float-left">
-                <label for="groupCheckBox">{{ group }}</label>
+          <b-row style="border-bottom: solid green">
+            <b-col cols="1"><input type="checkbox" :id="'groupCheckBox_' + group" v-model="groupChecked[group]" @click="checkGroupAll($event.target.checked, group)" /></b-col>
+            <b-col cols="8"
+              ><h4 class="text-left">
+                <label :for="'groupCheckBox_' + group"
+                  ><b>{{ group }}</b></label
+                >
               </h4></b-col
             >
             <b-col></b-col>
           </b-row>
 
-          <b-row class="m-3" v-for="(item, index) in deliveryGroup" :key="index">
+          <b-row v-for="(item, index) in deliveryGroup" :key="index" style="border-bottom: solid 0.05em grey">
             <b-col cols="1"><input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem($event.target.checked, item)" /></b-col>
-            <b-col cols="6" class="text-left">{{ item.name }}</b-col>
-            <b-col>{{ item.quantity * item.price }}</b-col>
+            <b-col cols="1"><b-img :src="item.image" width="80px" height="80px" class="mt-2 mb-2"></b-img></b-col>
+            <b-col cols="5" class="text-left ml-3">{{ item.name }}</b-col>
+            <b-col cols="2" class="text-right">{{ (item.quantity * item.price) | money }} 원</b-col>
             <b-col>
               <b-button variant="warning" @click="decreaseQuantity(item)">-</b-button>
-              <span class="p-3">{{ item.quantity }}</span>
+              <span class="pl-3 pr-3">{{ item.quantity }}</span>
               <b-button variant="warning" @click="increaseQuantity(item)">+</b-button>
-              <b-button class="ml-3" variant="white" @click="discardItem(item)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
+              <b-button class="ml-2" variant="white" @click="discardItem(item)"><b-icon icon="trash-fill" variant="danger"></b-icon></b-button>
             </b-col>
           </b-row>
         </b-col>
       </b-row>
-      <b-row v-if="this.groups.length > 0">
-        <b-col cols="9">
-          결제예정금액 :
-          <span v-show="checkedItemCnt > 0"> {{ chekcedAmountOfPayment }}</span>
-          <span v-show="checkedItemCnt === 0"> {{ totalAmountOfPayment }}</span>
-          원
+      <b-row v-if="this.groups.length > 0" class="buyRow">
+        <b-col cols="2" class="text-right"> 결제예정금액 </b-col>
+        <b-col cols="2" class="text-left" style="font-size: 2em; color: orange">
+          <span v-if="checkedItemCnt > 0"
+            ><b>{{ chekcedAmountOfPayment | money }}원</b></span
+          >
+          <span v-else
+            ><b>{{ totalAmountOfPayment | money }}원</b></span
+          >
         </b-col>
-        <b-col>
-          <b-button variant="warning" @click="buy"> 구매하기 </b-button>
+        <b-col cols="2">
+          <b-button variant="warning" @click="order" class="mr-4"> 구매하기 <b-icon icon="credit-card"></b-icon></b-button>
         </b-col>
       </b-row>
       <b-row v-else> <p>장바구니가 비어있습니다.</p> </b-row>
@@ -213,12 +227,26 @@ export default {
       }
     },
   },
+  filters: {
+    money: function (value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+  },
 };
 </script>
 
 <style scoped>
 .row {
-  justify-content: center;
-  margin-bottom: 10%;
+  align-items: center;
+}
+
+.groupRow {
+  margin-bottom: 9%;
+  padding-bottom: 1%;
+  padding-top: 1%;
+}
+
+.buyRow {
+  justify-content: right;
 }
 </style>

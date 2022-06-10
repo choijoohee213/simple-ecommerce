@@ -3,18 +3,17 @@
     <b-container class="bv-example-row">
       <b-row v-for="(product, index) in products" :key="index" style="border-bottom: solid 0.03em grey">
         <b-col><b-img :src="product.image" width="110px" height="110px"></b-img></b-col>
-        <b-col v-if="product.quantity > 0" cols="4" class="text-left pl-3"
-          ><b>{{ product.name }}</b></b-col
-        >
-        <b-col v-else cols="4" class="text-left pl-3" style="text-decoration: line-through red"
-          ><b>{{ product.name }}</b></b-col
-        >
-        {{ product.quantity }}
+        <b-col v-if="product.quantity > 0" cols="4" class="text-left pl-3">
+          <b>{{ product.name }}</b>
+        </b-col>
+        <b-col v-else cols="4" class="text-left pl-3" style="text-decoration: line-through red">
+          <b>{{ product.name }}</b>
+        </b-col>
         <b-col cols="2">{{ product.price | money }} 원</b-col>
         <b-col>{{ product.deliveryGroup }}</b-col>
         <b-col>
-          <b-button variant="success" @click="addCartItem(`${product.id}`)">장바구니 <b-icon icon="cart-plus-fill"></b-icon></b-button
-        ></b-col>
+          <b-button variant="success" @click="addCartItem(`${product.id}`)">장바구니 <b-icon icon="cart-plus-fill"></b-icon></b-button>
+        </b-col>
       </b-row>
       <b-row v-if="!products.length"> <p>상품이 없습니다.</p> </b-row>
     </b-container>

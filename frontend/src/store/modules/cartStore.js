@@ -1,4 +1,4 @@
-import { selectAll, update, deleteItem, toggleSelect } from "@/api/cart.js";
+import { selectAll, plus, minus, deleteItem, toggleSelect, paySelected } from "@/api/cart.js";
 
 const cartStore = {
   namespaced: true,
@@ -17,20 +17,25 @@ const cartStore = {
         commit("SET_CART_ITEMS", response.data);
       });
     },
-    async updateQuantity({ commit }, info) {
+    async plusQuantity({ commit }, productId) {
       let success = true;
-      await update(
-        info,
-        () => {},
-        (error) => {
-          alert(error.response.data);
-          success = false;
-        }
-      );
+      await plus(productId, (error) => {
+        alert(error.response.data);
+        success = false;
+      });
+      if (!success) return success;
       selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });
       return success;
+    },
+    async minusQuantity({ commit }, productId) {
+      await minus(productId, (error) => {
+        alert(error.response.data);
+      });
+      selectAll((response) => {
+        commit("SET_CART_ITEMS", response.data);
+      });
     },
     async deleteCartItem({ commit }, productId) {
       await deleteItem(productId);
@@ -41,6 +46,15 @@ const cartStore = {
     async changeSelectedItem({ commit }, productId) {
       await toggleSelect(productId);
       selectAll((response) => {
+        commit("SET_CART_ITEMS", response.data);
+      });
+    },
+    async paySelectedItems({ commit }, amountOfPayment) {
+      await paySelected(
+        () => alert("구매 성공! (금액 : " + amountOfPayment + " 원)"),
+        (error) => alert(error.response.data)
+      );
+      await selectAll((response) => {
         commit("SET_CART_ITEMS", response.data);
       });
     },

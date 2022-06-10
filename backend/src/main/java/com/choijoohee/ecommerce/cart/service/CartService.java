@@ -17,4 +17,8 @@ public interface CartService {
 	void deleteCartItem(int productId);
 
 	void updateSelected(int productId);
+
+	void payAll();
+
+	void paySelectedItems();
 }

@@ -49,12 +49,14 @@ public class CartServiceImpl implements CartService {
 	public CartItemInsertResponse addCartItem(Product product) {
 		CartItem selectedItem = cartRepository.selectById(product.getId());
 		if (selectedItem == null) {
-			isValidQuantity(product.getQuantity());
+			if(product.getQuantity() <= 0) {
+				log.debug("상품 재고 없음");
+				throw new SoldOutException(product.getName(), product.getQuantity());
+			}
 			log.debug("장바구니에 없는 상품 - 추가");
 			cartRepository.insert(new CartItem(product));
 			return new CartItemInsertResponse();
 		} else {
-			isValidQuantity(product.getQuantity() - selectedItem.getQuantity());
 			log.debug("장바구니에 있던 상품 - 수 늘리기");
 			selectedItem.setQuantity(selectedItem.getQuantity() + 1);
 			cartRepository.updateQuantity(selectedItem);
@@ -65,7 +67,6 @@ public class CartServiceImpl implements CartService {
 	/**
 	 * 장바구니의 상품의 수량을 update 한다.
 	 * @param productId 상품의 번호(id)
-	 * @param updatedQuantity 바뀔 수량의 개수
 	 */
 	@Override
 	@Transactional
@@ -97,14 +98,40 @@ public class CartServiceImpl implements CartService {
 	}
 
 	/**
-	 * 상품의 재고(수량)가 남아있는 지 확인한다.
-	 * 남아있지 않다면 SoldOutException 예외 발생
-	 * @param quantity 수량
+	 * 장바구니의 모든 상품을 구매한다.
+	 * 장바구니의 모든 상품을 조회한 후, 모든 상품의 재고가 충분한지 확인한다.
+	 * 충분하지 않을 경우 SoldOutException 발생
+	 * 충분할 경우에 장바구니에서 모든 상품 삭제
 	 */
-	public void isValidQuantity(int quantity) {
-		if (quantity <= 0) {
-			log.debug("상품 재고 없음");
-			throw new SoldOutException();
-		}
+	@Override
+	@Transactional
+	public void payAll() {
+		cartRepository.selectAll().forEach(item -> {
+			int stockQuantity = cartRepository.selectStockQuantity(item.getProductId());
+			if (stockQuantity < item.getQuantity()) {
+				throw new SoldOutException(item.getName(), stockQuantity);
+			}
+		});
+		cartRepository.deleteAll();
+	}
+
+	/**
+	 * 장바구니에서 선택된 상품들만 구매한다.
+	 * 구매할 모든 상품의 재고가 충분한지 확인한다.
+	 * 충분하지 않다면 SoldOutException을 발생 후 종료
+	 * 충분하다면 구매하고 장바구니 목록에서 삭제한다.
+	 */
+	@Override
+	@Transactional
+	public void paySelectedItems() {
+		cartRepository.selectAll().stream()
+			.filter(CartItem::isSelected).forEach(item -> {
+				int stockQuantity = cartRepository.selectStockQuantity(item.getProductId());
+				if (stockQuantity < item.getQuantity()) {
+					throw new SoldOutException(item.getName(), stockQuantity);
+				} else {
+					cartRepository.delete(item.getProductId());
+				}
+			});
 	}
 }

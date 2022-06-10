@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.choijoohee.ecommerce.cart.dto.CartItem;
 import com.choijoohee.ecommerce.cart.dto.CartItemInsertResponse;
 import com.choijoohee.ecommerce.cart.service.CartService;
-import com.choijoohee.ecommerce.product.dto.Product;
 import com.choijoohee.ecommerce.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,22 +48,32 @@ public class CartController {
 	@PostMapping("/{productId}")
 	public ResponseEntity<CartItemInsertResponse> addCartItem(@PathVariable int productId) {
 		log.debug("장바구니에 상품 추가 로직 시작");
-		Product product = productService.findProductById(productId);
-		return new ResponseEntity<>(cartService.addCartItem(product), HttpStatus.OK);
+		return new ResponseEntity<>(cartService.addCartItem(productService.findProductById(productId)), HttpStatus.OK);
 	}
 
 	/**
-	 * 장바구니의 상품의 수량을 바꾼다.
-	 * +/- 버튼을 누르면 동작하는 메서드
+	 * 장바구니의 상품의 수량을 증가시킨다.
+	 * + 버튼을 누르면 동작하는 메서드
 	 * @param productId 상품의 번호(id)
-	 * @param quantity 바뀔 수량의 개수
 	 * @return
 	 */
-	@PutMapping("/{productId}/{quantity}")
-	public ResponseEntity<?> updateQuantity(@PathVariable int productId, @PathVariable int quantity) {
-		log.debug("장바구니 상품 수량 업데이트");
-		Product product = productService.findProductById(productId);
-		cartService.updateQuantity(productId, product.getQuantity(), quantity);
+	@PutMapping("/{productId}/plus")
+	public ResponseEntity<?> increaseQuantity(@PathVariable int productId) {
+		log.debug("장바구니 상품 수량 증가");
+		cartService.increaseQuantity(productId);
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 장바구니의 상품의 수량을 감소시킨다.
+	 * - 버튼을 누르면 동작하는 메서드
+	 * @param productId 상품의 번호(id)
+	 * @return
+	 */
+	@PutMapping("/{productId}/minus")
+	public ResponseEntity<?> decreaseQuantity(@PathVariable int productId) {
+		log.debug("장바구니 상품 수량 감소");
+		cartService.decreaseQuantity(productId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -90,6 +99,24 @@ public class CartController {
 	public ResponseEntity<?> toggleSelectedItem(@PathVariable int productId) {
 		log.debug("장바구니 상품 체크 토글");
 		cartService.updateSelected(productId);
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 장바구니의 모든 상품을 구매한다.
+	 * @return
+	 */
+	@GetMapping("/pay")
+	public ResponseEntity<HttpStatus> payAll() {
+		log.debug("장바구니의 모든 상품 구매");
+		cartService.payAll();
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/pay/selected")
+	public ResponseEntity<HttpStatus> paySelected() {
+		log.debug("장바구니에서 선택한 상품 구매");
+		cartService.paySelectedItems();
 		return ResponseEntity.ok().build();
 	}
 }

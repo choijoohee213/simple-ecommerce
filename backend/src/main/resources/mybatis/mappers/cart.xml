@@ -5,13 +5,13 @@
     <select id="selectAll" resultType="CartItem">
         select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, p.image, cart.selected
         from cart
-        inner join product p on cart.product_id = p.id
+                 inner join product p on cart.product_id = p.id
     </select>
 
     <select id="selectById" resultType="CartItem">
         select cart.product_id, p.delivery_group, p.name, p.price, cart.quantity, p.image, cart.selected
         from cart
-        inner join product p on cart.product_id = p.id
+                 inner join product p on cart.product_id = p.id
         where cart.product_id = #{productId};
     </select>
 
@@ -32,9 +32,21 @@
         where product_id = #{productId}
     </delete>
 
+    <delete id="deleteAll">
+        delete
+        from cart;
+    </delete>
+
     <update id="updateSelected">
         update cart
         set selected = !selected
         where product_id = #{productId}
     </update>
+
+    <select id="selectStockQuantity" resultType="int">
+        select p.quantity
+        from cart
+                 inner join product p on cart.product_id = p.id
+        where cart.product_id = #{productId}
+    </select>
 </mapper>

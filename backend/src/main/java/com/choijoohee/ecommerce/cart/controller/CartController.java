@@ -62,7 +62,7 @@ public class CartController {
 		log.debug("장바구니 상품 수량 수정 - 사용자가 직접 값 입력");
 		log.debug(productId + " " + quantity);
 		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
-		if(beforeQuantity != quantity) {
+		if (beforeQuantity != quantity) {
 			cartService.updateQuantity(productId, quantity);
 		}
 		return ResponseEntity.ok().build();

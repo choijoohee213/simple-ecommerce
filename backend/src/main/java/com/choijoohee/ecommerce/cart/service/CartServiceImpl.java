@@ -59,7 +59,7 @@ public class CartServiceImpl implements CartService {
 	public CartItemInsertResponse addCartItem(Product product) {
 		CartItem selectedItem = cartRepository.selectById(product.getId());
 		if (selectedItem == null) {
-			if(product.getQuantity() <= 0) {
+			if (product.getQuantity() <= 0) {
 				log.debug("상품 재고 없음");
 				throw new SoldOutException(product.getName(), product.getQuantity());
 			}
@@ -84,7 +84,7 @@ public class CartServiceImpl implements CartService {
 	public void updateQuantity(int productId, int updatedQuantity) {
 		CartItem selectedItem = cartRepository.selectById(productId);
 		int stockQuantity = cartRepository.selectStockQuantity(productId);
-		if(selectedItem.getQuantity() < updatedQuantity && stockQuantity < updatedQuantity) {
+		if (selectedItem.getQuantity() < updatedQuantity && stockQuantity < updatedQuantity) {
 			log.debug("상품 재고 없음");
 			throw new SoldOutException(selectedItem.getName(), stockQuantity);
 		}

@@ -13,9 +13,7 @@ const cartStore = {
   },
   actions: {
     async getCartItems({ commit }) {
-      await selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      await selectAll((response) => commit("SET_CART_ITEMS", response.data));
     },
     async plusQuantity({ commit }, productId) {
       let success = true;
@@ -24,39 +22,27 @@ const cartStore = {
         success = false;
       });
       if (!success) return success;
-      selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      selectAll((response) => commit("SET_CART_ITEMS", response.data));
       return success;
     },
     async minusQuantity({ commit }, productId) {
-      await minus(productId, (error) => {
-        alert(error.response.data);
-      });
-      selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      await minus(productId, (error) => alert(error.response.data));
+      selectAll((response) => commit("SET_CART_ITEMS", response.data));
     },
     async deleteCartItem({ commit }, productId) {
       await deleteItem(productId);
-      await selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      await selectAll((response) => commit("SET_CART_ITEMS", response.data));
     },
     async changeSelectedItem({ commit }, productId) {
       await toggleSelect(productId);
-      selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      selectAll((response) => commit("SET_CART_ITEMS", response.data));
     },
     async paySelectedItems({ commit }, amountOfPayment) {
       await paySelected(
         () => alert("구매 성공! (금액 : " + amountOfPayment + " 원)"),
         (error) => alert(error.response.data)
       );
-      await selectAll((response) => {
-        commit("SET_CART_ITEMS", response.data);
-      });
+      await selectAll((response) => commit("SET_CART_ITEMS", response.data));
     },
   },
 };

@@ -14,9 +14,7 @@ const productStore = {
   actions: {
     // 전체 상품 목록 가져오기
     getProducts({ commit }) {
-      selectAll((response) => {
-        commit("SET_PRODUCTS", response.data);
-      });
+      selectAll((response) => commit("SET_PRODUCTS", response.data));
     },
   },
 };

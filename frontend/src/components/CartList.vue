@@ -103,6 +103,7 @@ export default {
   },
   methods: {
     ...mapActions(cartStore, ["getCartItems", "plusQuantity", "minusQuantity", "deleteCartItem", "changeSelectedItem", "paySelectedItems"]),
+    //그룹 체크박스 상태 및 전체선택 체크박스 상태를 초기화하고 결제예정금액을 계산한다.
     async initCheckedState() {
       this.checkedItemCnt = 0;
       this.checkedGroupCnt = 0;
@@ -125,6 +126,7 @@ export default {
         if (this.groupChecked[groupName]) this.checkedGroupCnt++;
       }
     },
+    //사용자가 직접 상품의 수량을 입력하여 수정하였을 때 호출되는 메서드
     async changeQuantity(item) {
       if (item.quantity < 1) {
         item.quantity = 1;
@@ -135,6 +137,7 @@ export default {
       await this.getCartItems();
       this.initCheckedState();
     },
+    //사용자가 +버튼을 누를 때 호출되는 메서드로, 수량을 1증가시키고 결제예정금액을 계산.
     async increaseQuantity(item) {
       let success = await this.plusQuantity(item.productId);
       if (success) {
@@ -142,17 +145,20 @@ export default {
         this.totalAmountOfPayment += item.price;
       }
     },
+    //사용자가 -버튼을 누를 때 호출되는 메서드로, 수량을 1감소시키고 결제예정금액을 계산.
     decreaseQuantity(item) {
       if (item.quantity === 1) return;
       if (item.selected) this.chekcedAmountOfPayment -= item.price;
       this.totalAmountOfPayment -= item.price;
       this.minusQuantity(item.productId);
     },
+    //전체선택 체크박스를 눌렀을때 호출되는 메서드로, 장바구니의 모든 체크박스 상태를 똑같이 변경
     checkAll(checked) {
       for (let g in this.groups) {
         this.checkGroupAll(checked, this.groups[g]);
       }
     },
+    //그룹 체크박스를 눌렀을 때 호출되는 메서드로, 그룹 내 모든 상품의 체크박스 상태를 똑같이 변경 및 결제예정금액 계산
     checkGroupAll(checked, groupName) {
       this.groupChecked[groupName] = checked;
       if (!checked) this.checkedGroupCnt--;
@@ -171,6 +177,7 @@ export default {
         }
       }
     },
+    //상품 하나의 체크박스를 눌렀을 때 호출되는 메서드로, 다른 체크박스 상태에 변경사항이 생기는지 확인 및 결제예정금액 계산
     checkItem(checked, item) {
       this.changeSelectedItem(item.productId);
       if (!checked) {
@@ -192,6 +199,7 @@ export default {
       this.checkedGroupCnt++;
       this.groupChecked[item.deliveryGroup] = true;
     },
+    //상품 하나를 삭제할 때 호출되는 메서드로, 체크박스 상태들을 갱신하고 결제예정금액 또한 갱신
     async discardItem(item) {
       this.totalAmountOfPayment -= item.quantity * item.price;
       if (item.selected) {
@@ -217,6 +225,7 @@ export default {
         }
       });
     },
+    //체크박스가 선택된 여러 상품들을 삭제할 때 호출되는 메서드
     async discardCheckedItems() {
       if (this.checkedItemCnt === 0) {
         alert("선택된 상품이 없습니다.");
@@ -235,6 +244,8 @@ export default {
         await this.discardItem(deleted[i]);
       }
     },
+    //구매하기를 눌렀을 때 호출되는 메서드로, 재고확인을 통해 구매가 가능한지 확인한 후 장바구니 목록에서 삭제
+    //체크박스를 체크한 것이 하나도 없을 경우 전체 구매, 있다면 체크한 상품들만 구매
     async order() {
       if (this.checkedItemCnt == 0) {
         let amountOfPayment = this.totalAmountOfPayment;

@@ -41,6 +41,7 @@ export default {
   },
   methods: {
     ...mapActions(productStore, ["getProducts"]),
+    //상품 목록 중 원하는 상품을 장바구니에 추가
     addCartItem(productId) {
       insert(
         productId,

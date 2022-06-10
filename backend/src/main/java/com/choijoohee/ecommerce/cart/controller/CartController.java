@@ -52,6 +52,23 @@ public class CartController {
 	}
 
 	/**
+	 * 장바구니 상품의 수량을 수정한다.
+	 * +/- 버튼이 아닌 사용자가 값을 직접 바꿀 경우 호출된다.
+	 * @param productId 상품 번호(id)
+	 * @param quantity 바꿀 상품 수량
+	 */
+	@PutMapping("{productId}/{quantity}")
+	public ResponseEntity<HttpStatus> updateQuantity(@PathVariable int productId, @PathVariable int quantity) {
+		log.debug("장바구니 상품 수량 수정 - 사용자가 직접 값 입력");
+		log.debug(productId + " " + quantity);
+		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
+		if(beforeQuantity != quantity) {
+			cartService.updateQuantity(productId, quantity);
+		}
+		return ResponseEntity.ok().build();
+	}
+
+	/**
 	 * 장바구니의 상품의 수량을 증가시킨다.
 	 * + 버튼을 누르면 동작하는 메서드
 	 * @param productId 상품의 번호(id)
@@ -60,7 +77,8 @@ public class CartController {
 	@PutMapping("/{productId}/plus")
 	public ResponseEntity<?> increaseQuantity(@PathVariable int productId) {
 		log.debug("장바구니 상품 수량 증가");
-		cartService.increaseQuantity(productId);
+		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
+		cartService.updateQuantity(productId, beforeQuantity + 1);
 		return ResponseEntity.ok().build();
 	}
 
@@ -73,7 +91,8 @@ public class CartController {
 	@PutMapping("/{productId}/minus")
 	public ResponseEntity<?> decreaseQuantity(@PathVariable int productId) {
 		log.debug("장바구니 상품 수량 감소");
-		cartService.decreaseQuantity(productId);
+		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
+		cartService.updateQuantity(productId, beforeQuantity - 1);
 		return ResponseEntity.ok().build();
 	}
 

@@ -39,6 +39,16 @@ public class CartServiceImpl implements CartService {
 	}
 
 	/**
+	 * 상품 번호로 장바구니에 있는 상품을 찾는다.
+	 * @param productId 상품 번호(id)
+	 * @return
+	 */
+	@Override
+	public CartItem getCartItem(int productId) {
+		return cartRepository.selectById(productId);
+	}
+
+	/**
 	 * 해당 상품의 재고가 남아있는 지 확인 후,
 	 * 재고가 있다면 장바구니에 이미 있던 상품인지 확인한다.
 	 * 이미 있던 상품이라면 장바구니의 수량을 하나 늘리고, 아니라면 장바구니에 새로 넣는다.
@@ -65,14 +75,19 @@ public class CartServiceImpl implements CartService {
 	}
 
 	/**
-	 * 장바구니의 상품의 수량을 update 한다.
+	 * 장바구니의 상품의 수량을 수정한다.
+	 * 이 때 재고를 확인하여 충분하지 않다면 예외를 발생시킨다.
 	 * @param productId 상품의 번호(id)
 	 */
 	@Override
 	@Transactional
-	public void updateQuantity(int productId, int productQuantity, int updatedQuantity) {
-		isValidQuantity(productQuantity - (updatedQuantity - 1));
+	public void updateQuantity(int productId, int updatedQuantity) {
 		CartItem selectedItem = cartRepository.selectById(productId);
+		int stockQuantity = cartRepository.selectStockQuantity(productId);
+		if(selectedItem.getQuantity() < updatedQuantity && stockQuantity < updatedQuantity) {
+			log.debug("상품 재고 없음");
+			throw new SoldOutException(selectedItem.getName(), stockQuantity);
+		}
 		selectedItem.setQuantity(updatedQuantity);
 		cartRepository.updateQuantity(selectedItem);
 	}

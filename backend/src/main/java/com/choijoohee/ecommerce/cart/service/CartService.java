@@ -10,9 +10,11 @@ import com.choijoohee.ecommerce.product.dto.Product;
 public interface CartService {
 	Map<String, List<CartItem>> getCartItems();
 
+	CartItem getCartItem(int productId);
+
 	CartItemInsertResponse addCartItem(Product product);
 
-	void updateQuantity(int productId, int productQuantity, int updatedQuantity);
+	void updateQuantity(int productId, int updatedQuantity);
 
 	void deleteCartItem(int productId);
 

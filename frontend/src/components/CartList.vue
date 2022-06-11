@@ -43,7 +43,11 @@
               </label>
             </b-col>
             <b-col cols="5" class="text-left ml-3">{{ item.name }}</b-col>
-            <b-col cols="2" class="text-right">{{ (item.quantity * item.price) | money }} 원</b-col>
+            <b-col cols="2" class="text-right">
+              <span>
+                <span style="font-size: 1.3em; font-weight: bold">{{ (item.quantity * item.price) | money }}</span> 원
+              </span>
+            </b-col>
             <b-col>
               <b-button variant="warning" @click="decreaseQuantity(item)">-</b-button>
               <span class="pl-2 pr-2">

@@ -9,7 +9,9 @@
         <b-col v-else cols="4" class="text-left pl-3" style="text-decoration: line-through red">
           <b>{{ product.name }}</b>
         </b-col>
-        <b-col cols="2">{{ product.price | money }} 원</b-col>
+        <b-col cols="2">
+          <span style="font-weight: bold">{{ product.price | money }}</span> 원
+        </b-col>
         <b-col>{{ product.deliveryGroup }}</b-col>
         <b-col>
           <b-button variant="success" @click="addCartItem(`${product.id}`)">장바구니 <b-icon icon="cart-plus-fill"></b-icon></b-button>

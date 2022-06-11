@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.choijoohee.ecommerce.product.exception.SoldOutException;
 
+/**
+ * Exception 처리를 해주기 위한 advice 클래스이다.
+ */
 @RestControllerAdvice
 public class ExceptionAdvice {
 

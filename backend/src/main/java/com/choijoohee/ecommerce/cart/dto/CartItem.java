@@ -5,6 +5,9 @@ import com.choijoohee.ecommerce.product.dto.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 장바구니 상품을 위한 dto로, cart 테이블의 컬럼명과 일치한다.
+ */
 @Data
 @AllArgsConstructor
 public class CartItem {

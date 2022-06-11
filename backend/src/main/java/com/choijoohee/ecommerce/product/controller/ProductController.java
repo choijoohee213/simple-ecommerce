@@ -13,6 +13,9 @@ import com.choijoohee.ecommerce.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 상품에 관련한 요청을 처리한 후에 응답을 리턴하는 RestController 클래스이다.
+ */
 @RestController
 @RequiredArgsConstructor
 @Slf4j

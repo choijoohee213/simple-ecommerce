@@ -21,6 +21,9 @@ import com.choijoohee.ecommerce.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 장바구니에 관련한 요청을 처리한 후에 응답을 리턴하는 RestController 클래스이다.
+ */
 @RestController
 @RequestMapping("/cart")
 @Slf4j
@@ -75,7 +78,7 @@ public class CartController {
 	 * @return
 	 */
 	@PutMapping("/{productId}/plus")
-	public ResponseEntity<?> increaseQuantity(@PathVariable int productId) {
+	public ResponseEntity<HttpStatus> increaseQuantity(@PathVariable int productId) {
 		log.debug("장바구니 상품 수량 증가");
 		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
 		cartService.updateQuantity(productId, beforeQuantity + 1);
@@ -89,7 +92,7 @@ public class CartController {
 	 * @return
 	 */
 	@PutMapping("/{productId}/minus")
-	public ResponseEntity<?> decreaseQuantity(@PathVariable int productId) {
+	public ResponseEntity<HttpStatus> decreaseQuantity(@PathVariable int productId) {
 		log.debug("장바구니 상품 수량 감소");
 		int beforeQuantity = cartService.getCartItem(productId).getQuantity();
 		cartService.updateQuantity(productId, beforeQuantity - 1);
@@ -102,7 +105,7 @@ public class CartController {
 	 * @return
 	 */
 	@DeleteMapping("/{productId}")
-	public ResponseEntity<?> deleteCartItem(@PathVariable int productId) {
+	public ResponseEntity<HttpStatus> deleteCartItem(@PathVariable int productId) {
 		log.debug("장바구니 상품 삭제");
 		cartService.deleteCartItem(productId);
 		return ResponseEntity.ok().build();
@@ -115,7 +118,7 @@ public class CartController {
 	 * @return
 	 */
 	@PutMapping("/{productId}/selected")
-	public ResponseEntity<?> toggleSelectedItem(@PathVariable int productId) {
+	public ResponseEntity<HttpStatus> toggleSelectedItem(@PathVariable int productId) {
 		log.debug("장바구니 상품 체크 토글");
 		cartService.updateSelected(productId);
 		return ResponseEntity.ok().build();

@@ -60,10 +60,10 @@
         </b-col>
       </b-row>
       <b-row v-if="this.groups.length > 0" class="buyRow">
-        <b-col cols="2" class="text-right"> 결제예정금액 </b-col>
+        <b-col cols="2" class="text-right"> 결제 예정 금액 </b-col>
         <b-col cols="2" class="text-left" style="font-size: 2em; color: orange">
           <span v-if="checkedItemCnt > 0">
-            <b>{{ chekcedAmountOfPayment | money }}원</b>
+            <b>{{ checkedAmountOfPayment | money }}원</b>
           </span>
           <span v-else>
             <b>{{ totalAmountOfPayment | money }}원</b>
@@ -92,7 +92,7 @@ export default {
       checkedGroupCnt: 0,
       groupChecked: {},
       totalAmountOfPayment: 0,
-      chekcedAmountOfPayment: 0,
+      checkedAmountOfPayment: 0,
     };
   },
   computed: {
@@ -114,7 +114,7 @@ export default {
       this.checkedItemCnt = 0;
       this.checkedGroupCnt = 0;
       this.totalAmountOfPayment = 0;
-      this.chekcedAmountOfPayment = 0;
+      this.checkedAmountOfPayment = 0;
       for (let g in this.groups) {
         let groupName = this.groups[g];
         let checkable = true;
@@ -124,7 +124,7 @@ export default {
           if (!item.selected) {
             checkable = false;
           } else {
-            this.chekcedAmountOfPayment += item.quantity * item.price;
+            this.checkedAmountOfPayment += item.quantity * item.price;
             this.checkedItemCnt++;
           }
         }
@@ -147,21 +147,37 @@ export default {
     async increaseQuantity(item) {
       let success = await this.plusQuantity(item.productId);
       if (success) {
-        if (item.selected) this.chekcedAmountOfPayment += item.price;
+        if (item.selected) this.checkedAmountOfPayment += item.price;
         this.totalAmountOfPayment += item.price;
       }
     },
     //사용자가 -버튼을 누를 때 호출되는 메서드로, 수량을 1감소시키고 결제예정금액을 계산.
     decreaseQuantity(item) {
       if (item.quantity === 1) return;
-      if (item.selected) this.chekcedAmountOfPayment -= item.price;
+      if (item.selected) this.checkedAmountOfPayment -= item.price;
       this.totalAmountOfPayment -= item.price;
       this.minusQuantity(item.productId);
     },
     //전체선택 체크박스를 눌렀을때 호출되는 메서드로, 장바구니의 모든 체크박스 상태를 똑같이 변경
-    checkAll(checked) {
+    async checkAll(checked) {
+      if (checked) this.checkedGroupCnt = this.groups.length;
+      else this.checkedGroupCnt = 0;
       for (let g in this.groups) {
-        this.checkGroupAll(checked, this.groups[g]);
+        let groupName = this.groups[g];
+        this.groupChecked[groupName] = checked;
+        for (let i in this.cartItems[groupName]) {
+          let item = this.cartItems[groupName][i];
+          if (item.selected != checked) {
+            if (!checked) {
+              this.checkedItemCnt--;
+              this.checkedAmountOfPayment -= item.quantity * item.price;
+            } else {
+              this.checkedItemCnt++;
+              this.checkedAmountOfPayment += item.quantity * item.price;
+            }
+            this.changeSelectedItem(item.productId);
+          }
+        }
       }
     },
     //그룹 체크박스를 눌렀을 때 호출되는 메서드로, 그룹 내 모든 상품의 체크박스 상태를 똑같이 변경 및 결제예정금액 계산
@@ -174,10 +190,10 @@ export default {
         if (item.selected != checked) {
           if (!checked) {
             this.checkedItemCnt--;
-            this.chekcedAmountOfPayment -= item.quantity * item.price;
+            this.checkedAmountOfPayment -= item.quantity * item.price;
           } else {
             this.checkedItemCnt++;
-            this.chekcedAmountOfPayment += item.quantity * item.price;
+            this.checkedAmountOfPayment += item.quantity * item.price;
           }
           this.changeSelectedItem(item.productId);
         }
@@ -192,11 +208,11 @@ export default {
           this.groupChecked[item.deliveryGroup] = false;
         }
         this.checkedItemCnt--;
-        this.chekcedAmountOfPayment -= item.quantity * item.price;
+        this.checkedAmountOfPayment -= item.quantity * item.price;
         return;
       }
       this.checkedItemCnt++;
-      this.chekcedAmountOfPayment += item.quantity * item.price;
+      this.checkedAmountOfPayment += item.quantity * item.price;
       for (let i in this.cartItems[item.deliveryGroup]) {
         if (!this.cartItems[item.deliveryGroup][i].selected) {
           return;
@@ -210,7 +226,7 @@ export default {
       this.totalAmountOfPayment -= item.quantity * item.price;
       if (item.selected) {
         this.checkedItemCnt--;
-        this.chekcedAmountOfPayment -= item.quantity * item.price;
+        this.checkedAmountOfPayment -= item.quantity * item.price;
       }
       let isCheckedGroup = this.groupChecked[item.deliveryGroup];
       await this.deleteCartItem(item.productId).then(() => {
@@ -263,7 +279,7 @@ export default {
           (error) => alert(error.response.data)
         );
       } else {
-        await this.paySelectedItems(this.chekcedAmountOfPayment);
+        await this.paySelectedItems(this.checkedAmountOfPayment);
         await this.initCheckedState();
       }
     },

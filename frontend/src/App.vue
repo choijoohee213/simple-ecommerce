@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/product">Product</router-link> |
-      <router-link to="/cart">Cart</router-link>
+      <router-link to="/product">상품</router-link> |
+      <router-link to="/cart">장바구니</router-link>
     </nav>
     <router-view />
   </div>

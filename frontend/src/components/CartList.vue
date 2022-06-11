@@ -33,12 +33,14 @@
             <b-col></b-col>
           </b-row>
 
-          <b-row v-for="(item, index) in deliveryGroup" :key="index" style="border-bottom: solid 0.05em grey">
+          <b-row v-for="(item, index) in deliveryGroup" :key="index" style="border-bottom: solid 0.05em #cfcfcf">
             <b-col cols="1">
-              <input type="checkbox" :value="item.name" v-model="item.selected" @change="checkItem($event.target.checked, item)" />
+              <input type="checkbox" :value="item.name" :id="item.productId" v-model="item.selected" @change="checkItem($event.target.checked, item)" />
             </b-col>
             <b-col cols="1">
-              <b-img :src="item.image" width="80px" height="80px" class="mt-2 mb-2"></b-img>
+              <label :for="item.productId">
+                <b-img :src="item.image" width="80px" height="80px" class="mt-2 mb-2"></b-img>
+              </label>
             </b-col>
             <b-col cols="5" class="text-left ml-3">{{ item.name }}</b-col>
             <b-col cols="2" class="text-right">{{ (item.quantity * item.price) | money }} 원</b-col>
@@ -283,5 +285,10 @@ export default {
 
 .buyRow {
   justify-content: right;
+}
+
+label:hover {
+  color: rgba(160, 160, 160, 0.983);
+  cursor: pointer;
 }
 </style>

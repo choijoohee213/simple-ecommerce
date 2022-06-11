@@ -1,6 +1,6 @@
 <template>
   <div class="product">
-    <h1>Products</h1>
+    <h1>상품</h1>
     <router-view></router-view>
   </div>
 </template>

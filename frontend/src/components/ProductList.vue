@@ -1,7 +1,7 @@
 <template>
   <div class="my-3">
     <b-container class="bv-example-row">
-      <b-row v-for="(product, index) in products" :key="index" style="border-bottom: solid 0.03em grey">
+      <b-row v-for="(product, index) in products" :key="index" style="border-bottom: solid 0.05em #cfcfcf">
         <b-col><b-img :src="product.image" width="110px" height="110px"></b-img></b-col>
         <b-col v-if="product.quantity > 0" cols="4" class="text-left pl-3">
           <b>{{ product.name }}</b>
@@ -72,6 +72,6 @@ export default {
 }
 
 .row:hover {
-  background-color: rgb(245, 245, 245);
+  background-color: #f5f5f5;
 }
 </style>

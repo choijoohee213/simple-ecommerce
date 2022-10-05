@@ -61,7 +61,7 @@ REST 구조로 작성한 상품 선택부터 장바구니 구매까지의 주문
 
 
 ### 장바구니 화면 - 전체선택 체크
-<img width="509" alt="image" src="https://user-images.githubusercontent.com/60915285/194114027-285f23f6-d327-4eb2-9d4c-08ec902fd544.png">
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/60915285/194114027-285f23f6-d327-4eb2-9d4c-08ec902fd544.png">
 
 전체선택을 체크하면 장바구니 내의 모든 상품이 체크된다.
 
